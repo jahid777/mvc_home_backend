@@ -45,10 +45,29 @@ app.get("/product/:id", async (req, res) => {
 });
 
 //update the product with id
-app.put("/updateProduct/:id", async (req, res) => {
+app.patch("/updateProduct/:id", async (req, res) => {
   try {
-    const { id } = req.params();
-    const product = Product.findByIdAndUpdate(id, req.body);
+    const { id } = req.params;
+
+    const product = await Product.findByIdAndUpdate(id, req.body);
+    if (!product) {
+      return res.status(404).json({ message: `can not find your ${id}` });
+    }
+    const updateProduct = await Product.findById(id);
+    res.status(200).json(updateProduct);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete("/products/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await Product.findByIdAndDelete(id);
+    if (!product) {
+      return res.status(404).json({ message: `not found ${id}` });
+    }
+    res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
