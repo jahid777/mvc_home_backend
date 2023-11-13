@@ -5,6 +5,8 @@ require("dotenv").config();
 const Product = require("./Model/ProductModel");
 
 app.use(express.json());
+//this is for from data, if i dont use it then i can send only json data
+app.use(express.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send("hello");
@@ -45,6 +47,8 @@ app.get("/product/:id", async (req, res) => {
 //update the product with id
 app.put("/updateProduct/:id", async (req, res) => {
   try {
+    const { id } = req.params();
+    const product = Product.findByIdAndUpdate(id, req.body);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
